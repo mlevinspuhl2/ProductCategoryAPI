@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Options;
+using Microsoft.OpenApi.Models;
 using MongoTest;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,7 +11,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new() { Title = "ProductsAPI", Version = "v1" });
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Product Category API", Version = "v1" });
 });
 builder.Services.Configure<MongoDBSettings>(builder.Configuration.GetSection(nameof(MongoDBSettings)));
 
@@ -28,7 +29,7 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "ProductsAPI v1"));
+    app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Product Category API v1"));
 }
 
 app.UseHttpsRedirection();

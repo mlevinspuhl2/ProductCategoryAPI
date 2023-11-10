@@ -1,4 +1,5 @@
 ﻿using MongoDB.Driver;
+using MongoTest.models;
 
 namespace MongoTest
 {
@@ -13,5 +14,6 @@ namespace MongoTest
         }
 
         public IMongoCollection<Product> Products => _database.GetCollection<Product>("Products");
+        public IMongoCollection<Category> Categories => _database.GetCollection<Category>("Categories");
     }
 }
