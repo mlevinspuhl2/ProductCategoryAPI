@@ -13,6 +13,7 @@ try
 {
     var result = client.GetDatabase("admin").RunCommand<BsonDocument>(new BsonDocument("ping", 1));
     Console.WriteLine("Pinged your deployment. You successfully connected to MongoDB!");
+
 }
 catch (Exception ex)
 {
