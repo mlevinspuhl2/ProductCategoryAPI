@@ -3,7 +3,7 @@ using MongoDB.Bson;
 using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
 
-namespace MongoTest.models
+namespace ProductCategoryAPI.models
 {
     public class Category
     {

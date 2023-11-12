@@ -2,7 +2,7 @@
 using MongoDB.Bson;
 using System.ComponentModel.DataAnnotations;
 
-namespace MongoTest.models
+namespace ProductCategoryAPI.models
 {
     public class Product
     {

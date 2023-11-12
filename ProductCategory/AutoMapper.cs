@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
 using Microsoft.Extensions.Logging;
-using MongoTest.DTO;
-using MongoTest.models;
+using ProductCategoryAPI.DTO;
+using ProductCategoryAPI.models;
 
-namespace MongoTest
+namespace ProductCategoryAPI
 {
     public class AutoMapper : Profile
     {

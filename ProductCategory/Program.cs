@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
-using MongoTest.models;
-using MongoTest.Services;
+using ProductCategoryAPI.models;
+using ProductCategoryAPI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 

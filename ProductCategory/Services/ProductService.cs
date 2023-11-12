@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
-using MongoTest.DTO;
-using MongoTest.models;
+using ProductCategoryAPI.DTO;
+using ProductCategoryAPI.models;
 
-namespace MongoTest.Services
+namespace ProductCategoryAPI.Services
 {
     public class ProductService : BasicService, IProductService
     {

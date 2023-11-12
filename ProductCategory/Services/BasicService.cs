@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
-using MongoTest.models;
+using ProductCategoryAPI.models;
 
-namespace MongoTest.Services
+namespace ProductCategoryAPI.Services
 {
     public class BasicService
     {

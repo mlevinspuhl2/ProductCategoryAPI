@@ -1,4 +1,4 @@
-﻿namespace MongoTest.models
+﻿namespace ProductCategoryAPI.models
 {
     public class MongoDBSettings
     {

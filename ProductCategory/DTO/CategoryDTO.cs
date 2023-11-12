@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace MongoTest.DTO
+namespace ProductCategoryAPI.DTO
 {
     public class CategoryDTO
     {

@@ -1,6 +1,6 @@
 ﻿using MongoDB.Driver;
 
-namespace MongoTest.models
+namespace ProductCategoryAPI.models
 {
     public class MongoDBContext
     {

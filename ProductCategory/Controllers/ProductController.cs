@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using MongoTest.DTO;
-using MongoTest.models;
-using MongoTest.Services;
+using ProductCategoryAPI.DTO;
+using ProductCategoryAPI.models;
+using ProductCategoryAPI.Services;
 
-namespace MongoTest.Controllers
+namespace ProductCategoryAPI.Controllers
 {
     public class ProductController : ControllerBase
     {
