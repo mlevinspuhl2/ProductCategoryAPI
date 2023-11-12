@@ -1,4 +1,4 @@
-﻿namespace MongoTest
+﻿namespace MongoTest.models
 {
     public class MongoDBSettings
     {

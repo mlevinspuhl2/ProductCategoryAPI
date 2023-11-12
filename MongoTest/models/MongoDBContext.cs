@@ -1,7 +1,6 @@
 ﻿using MongoDB.Driver;
-using MongoTest.models;
 
-namespace MongoTest
+namespace MongoTest.models
 {
     public class MongoDBContext
     {

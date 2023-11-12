@@ -1,11 +1,11 @@
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
-using MongoTest;
+using MongoTest.models;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
+builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -23,20 +23,31 @@ builder.Services.AddSingleton<MongoDBContext>(serviceProvider =>
 
 // Add controllers
 builder.Services.AddControllers();
+builder.Services.AddCors(c =>
+{
+    c.AddPolicy("CorsPolicy", options =>
+    {
+        options.AllowAnyOrigin()
+        .AllowAnyHeader()
+        .AllowAnyMethod();
+    });
+});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Product Category API v1"));
-}
-
+//if (app.Environment.IsDevelopment())
+//{
+app.UseSwagger();
+app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Product Category API v1"));
+//}
 app.UseHttpsRedirection();
-
+app.UseRouting();
+app.UseCors("CorsPolicy");
 app.UseAuthorization();
-
-app.MapControllers();
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllers();
+});
 
 
 app.Run();
