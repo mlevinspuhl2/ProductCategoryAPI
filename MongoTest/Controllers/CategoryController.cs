@@ -1,26 +1,22 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Mvc;
-using MongoDB.Driver;
+﻿using Microsoft.AspNetCore.Mvc;
 using MongoTest.DTO;
 using MongoTest.models;
+using MongoTest.Services;
 
 namespace MongoTest.Controllers
 {
     public class CategoryController : Controller
     {
-        private readonly MongoDBContext _context;
-        private readonly IMapper _mapper;
-
-        public CategoryController(MongoDBContext context, IMapper mapper)
+        private readonly ICategoryService _categoryService;
+        public CategoryController(ICategoryService categoryService)
         {
-            _context = context;
-            _mapper = mapper;
+            _categoryService = categoryService;
         }
         [HttpGet]
         [Route("api/[controller]")]
         public async Task<IEnumerable<Category>> Get()
         {
-            return await _context.Categories.Find(_ => true).ToListAsync();
+            return await _categoryService.Get();
         }
         [HttpGet()]
         [Route("api/[controller]/{id}")]
@@ -28,7 +24,7 @@ namespace MongoTest.Controllers
         {
             try
             {
-                var category = await _context.Categories.Find(p => p.Id == id).FirstOrDefaultAsync();
+                var category = await _categoryService.Get(id);
 
                 if (category == null)
                 {
@@ -47,8 +43,7 @@ namespace MongoTest.Controllers
         {
             if (categoryDto != null)
             {
-                var category = _mapper.Map<Category>(categoryDto);
-                await _context.Categories.InsertOneAsync(category);
+                var category = await _categoryService.Create(categoryDto);
                 return CreatedAtRoute(new { id = category.Id }, category);
             }
             return NotFound("Category can not be null");
@@ -60,14 +55,12 @@ namespace MongoTest.Controllers
         {
             try
             {
-                var category = await _context.Categories.Find(p => p.Id == id).FirstOrDefaultAsync();
+                var category = await _categoryService.Get(id);
                 if (category == null)
                 {
                     return NotFound();
                 }
-                var categoryReplace = _mapper.Map<Category>(categoryDto);
-                categoryReplace.Id = id;
-                await _context.Categories.ReplaceOneAsync(p => p.Id == id, categoryReplace);
+                await _categoryService.Update(id, categoryDto);
 
                 return NoContent();
             }
@@ -82,15 +75,13 @@ namespace MongoTest.Controllers
         {
             try
             {
-                var category = await _context.Categories.Find(p => p.Id == id).FirstOrDefaultAsync();
+                var category = await _categoryService.Get(id);
 
                 if (category == null)
                 {
                     return NotFound();
                 }
-
-                await _context.Products.DeleteOneAsync(p => p.Id == id);
-
+                await _categoryService.Delete(id);
                 return NoContent();
             }
             catch (Exception ex)
