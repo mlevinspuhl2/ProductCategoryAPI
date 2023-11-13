@@ -8,15 +8,27 @@ namespace ProductCategoryAPI.Controllers
     public class CategoryController : Controller
     {
         private readonly ICategoryService _categoryService;
-        public CategoryController(ICategoryService categoryService)
+        private readonly ILogger<CategoryController> _logger;
+        public CategoryController(ICategoryService categoryService, ILogger<CategoryController> logger)
         {
             _categoryService = categoryService;
+            _logger = logger;
         }
         [HttpGet]
         [Route("api/[controller]")]
-        public async Task<IEnumerable<Category>> Get()
+        public async Task<ActionResult<IEnumerable<Category>>> Get()
         {
-            return await _categoryService.Get();
+            try
+            {
+                _logger.LogInformation("Get");
+                return Ok(await _categoryService.Get());
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError("Get", ex);
+                return StatusCode(500, ex.Message);
+            }
+            
         }
         [HttpGet()]
         [Route("api/[controller]/{id}")]

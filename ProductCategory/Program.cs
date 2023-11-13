@@ -1,7 +1,9 @@
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
+using NLog.Extensions.Logging;
 using ProductCategoryAPI.models;
 using ProductCategoryAPI.Services;
+using System.Globalization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +24,10 @@ builder.Services.AddSingleton<MongoDBContext>(serviceProvider =>
 {
     var settings = serviceProvider.GetRequiredService<IOptions<MongoDBSettings>>().Value;
     return new MongoDBContext(settings.ConnectionString, settings.DatabaseName);
+});
+
+builder.Services.AddLogging(loggingBuilder => {
+    loggingBuilder.AddNLog("nlog.config");
 });
 
 // Add controllers
