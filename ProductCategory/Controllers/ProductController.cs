@@ -33,7 +33,7 @@ namespace ProductCategoryAPI.Controllers
 
                 if (product == null)
                 {
-                    return NotFound($"Product not found by id:{id}!");
+                    return NotFound();
                 }
                 return Ok(product);
             }
@@ -55,14 +55,14 @@ namespace ProductCategoryAPI.Controllers
                     category = await _categoryService.Get(productDto.CategoryId);
                     if (category == null)
                     {
-                        return NotFound("Category not found");
+                        return NotFound();
                     }
                     
                 }
                 product = await _productService.Create(productDto, category);
                 return Ok(product);
             }
-            return NotFound("Product can not be null");
+            return NotFound();
         }
         [HttpPut()]
         [Route("api/[controller]/Update/{id}")]
@@ -75,14 +75,14 @@ namespace ProductCategoryAPI.Controllers
 
                 if (product == null)
                 {
-                    return NotFound($"Product not found by id:{id}");
+                    return NotFound();
                 }
                 if(productDto.CategoryId != null)
                 {
                     category = await _categoryService.Get(productDto.CategoryId);
                     if (category == null)
                     {
-                        return NotFound($"Category not found by categoryId:{productDto.CategoryId}");
+                        return NotFound();
                     }
                 }
 
