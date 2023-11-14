@@ -15,6 +15,7 @@ namespace TestProductCategory
     {
         private IHost _host;
         private IProductService? _productService;
+        private ICategoryService? _categoryService;
         private readonly MongoDBContext? _dbcontext;
         private Product _productData;
 
@@ -22,6 +23,7 @@ namespace TestProductCategory
         {
             _host = GetWorkerService().Build();
             _productService = _host.Services.GetService<IProductService>();
+            _categoryService = _host.Services.GetService<ICategoryService>();
             _dbcontext = _host.Services.GetService<MongoDBContext>();
             
         }
@@ -33,6 +35,15 @@ namespace TestProductCategory
                 Description = "Product Description"
             };
             return await _productService.Create(dto);
+        }
+        private async Task<Category> GetCategoryData(ICategoryService? _categoryService)
+        {
+            var dto = new CategoryDTO
+            {
+                Name = "Category Name",
+                Description = "Category Description"
+            };
+            return await _categoryService.Create(dto);
         }
         [Fact]
         public async Task Get_Test()
@@ -82,7 +93,50 @@ namespace TestProductCategory
             DeleteAll();
         }
         [Fact]
+        public async Task Create_WithCategoryTest()
+        {
+            // Arrange
+            //DeleteAll();
+            _productData = await GetProductData(_productService);
+            var _categoryData = await GetCategoryData(_categoryService);
+            var dto = new ProductDTO
+            {
+                Name = "Name Test",
+                Description = "Description Test",
+                CategoryId = _categoryData.Id
+            };
+            // Act
+            var result = await _productService.Create(dto, _categoryData);
+            // Assert
+            Assert.NotNull(result);
+            Assert.NotNull(result.Id);
+            Assert.Equal(dto.Description, result.Description);
+            DeleteAll();
+        }
+        [Fact]
         public async Task Update_Test()
+        {
+            // Arrange
+            //DeleteAll();
+            _productData = await GetProductData(_productService);
+            var _categoryData = await GetCategoryData(_categoryService);
+            var dto = new ProductDTO
+            {
+                Name = "Name Test",
+                Description = "Description Test",
+                CategoryId = _categoryData.Id
+            };
+            // Act
+            await _productService.Update(_productData.Id, dto, _categoryData);
+            var result = await _productService.Get(_productData.Id);
+            // Assert
+            Assert.NotNull(result);
+            Assert.NotNull(result.Id);
+            Assert.Equal(dto.Description, result.Description);
+            DeleteAll();
+        }
+        [Fact]
+        public async Task Update_WithCategoryTest()
         {
             // Arrange
             //DeleteAll();
