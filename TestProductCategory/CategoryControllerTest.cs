@@ -103,6 +103,19 @@ namespace TestProductCategory
             DeleteAll();
         }
         [Fact]
+        public async void Create_Should_Return_NotFoundTest()
+        {
+            // Arrange
+            //DeleteAll();
+            // Act
+            var actionResult = await controller.Create(null);
+            // Assert
+            var notFoundResult = actionResult as NotFoundResult;
+            Assert.NotNull(notFoundResult);
+            Assert.Equal((int)HttpStatusCode.NotFound, (int)notFoundResult.StatusCode);
+            DeleteAll();
+        }
+        [Fact]
         public async void Update_Test()
         {
             // Arrange
@@ -119,6 +132,25 @@ namespace TestProductCategory
             var noResult = actionResult as NoContentResult;
             Assert.NotNull(noResult);
             Assert.Equal((int)HttpStatusCode.NoContent, noResult.StatusCode);
+            DeleteAll();
+        }
+        [Fact]
+        public async void Update_Should_Return_NotFoundTest()
+        {
+            // Arrange
+            //DeleteAll();
+            var id = "6553a3bde159e09ee8bc1b47";
+            var dto = new CategoryDTO
+            {
+                Name = "Name Test",
+                Description = "Description Test"
+            };
+            // Act
+            var actionResult = await controller.Update(id, dto);
+            // Assert
+            var notFoundResult = actionResult as NotFoundResult;
+            Assert.NotNull(notFoundResult);
+            Assert.Equal((int)HttpStatusCode.NotFound, (int)notFoundResult.StatusCode);
             DeleteAll();
         }
         [Fact]
@@ -139,6 +171,20 @@ namespace TestProductCategory
             var noResult = actionResult as NoContentResult;
             Assert.NotNull(noResult);
             Assert.Equal((int)HttpStatusCode.NoContent, noResult.StatusCode);
+            DeleteAll();
+        }
+        [Fact]
+        public async void Delete_Should_Return_NotFoundTest()
+        {
+            // Arrange
+            //DeleteAll();
+            var id = "6553a3bde159e09ee8bc1b47";
+            // Act
+            var actionResult = await controller.Delete(id);
+            // Assert
+            var notFoundResult = actionResult as NotFoundResult;
+            Assert.NotNull(notFoundResult);
+            Assert.Equal((int)HttpStatusCode.NotFound, (int)notFoundResult.StatusCode);
             DeleteAll();
         }
         private async Task<Category> GetCategoryData(ICategoryService? _categoryService)

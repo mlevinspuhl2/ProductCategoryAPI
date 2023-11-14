@@ -58,7 +58,7 @@ namespace ProductCategoryAPI.Controllers
                 var category = await _categoryService.Create(categoryDto);
                 return Ok(category);
             }
-            return NotFound("Category can not be null");
+            return NotFound();
 
         }
         [HttpPut()]
