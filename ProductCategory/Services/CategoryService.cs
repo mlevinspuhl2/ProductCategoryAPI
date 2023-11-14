@@ -34,6 +34,8 @@ namespace ProductCategoryAPI.Services
         {
             var filter = Builders<Category>.Filter.Eq(category => category.Id, id);
             await _context.Categories.DeleteOneAsync(filter);
+            
         }
+     
     }
 }
