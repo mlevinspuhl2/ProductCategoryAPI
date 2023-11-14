@@ -68,6 +68,20 @@ namespace TestProductCategory
             DeleteAll();
         }
         [Fact]
+        public async void GetbyId_Should_Return_InternalErrorTest()
+        {
+            // Arrange
+            //DeleteAll();
+            var id = "123456";
+            // Act
+            var actionResult = await controller.Get(id);
+            // Assert
+            var objectResult = actionResult as ObjectResult;
+            Assert.NotNull(objectResult);
+            Assert.Equal((int)HttpStatusCode.InternalServerError, (int)objectResult.StatusCode);
+            DeleteAll();
+        }
+        [Fact]
         public async void GetbyId_Should_Return_NotFoundTest()
         {
             // Arrange
@@ -154,6 +168,25 @@ namespace TestProductCategory
             DeleteAll();
         }
         [Fact]
+        public async void Update_Should_Return_InternalErrorTest()
+        {
+            // Arrange
+            //DeleteAll();
+            var id = "123456";
+            var dto = new CategoryDTO
+            {
+                Name = "Name Test",
+                Description = "Description Test"
+            };
+            // Act
+            var actionResult = await controller.Update(id, dto);
+            // Assert
+            var objectResult = actionResult as ObjectResult;
+            Assert.NotNull(objectResult);
+            Assert.Equal((int)HttpStatusCode.InternalServerError, (int)objectResult.StatusCode);
+            DeleteAll();
+        }
+        [Fact]
         public async void Delete_Test()
         {
             // Arrange
@@ -185,6 +218,20 @@ namespace TestProductCategory
             var notFoundResult = actionResult as NotFoundResult;
             Assert.NotNull(notFoundResult);
             Assert.Equal((int)HttpStatusCode.NotFound, (int)notFoundResult.StatusCode);
+            DeleteAll();
+        }
+        [Fact]
+        public async void Delete_Should_Return_InternalErrorTest()
+        {
+            // Arrange
+            //DeleteAll();
+            var id = "123456";
+            // Act
+            var actionResult = await controller.Delete(id);
+            // Assert
+            var objectResult = actionResult as ObjectResult;
+            Assert.NotNull(objectResult);
+            Assert.Equal((int)HttpStatusCode.InternalServerError, (int)objectResult.StatusCode);
             DeleteAll();
         }
         private async Task<Category> GetCategoryData(ICategoryService? _categoryService)
