@@ -68,6 +68,20 @@ namespace TestProductCategory
             DeleteAll();
         }
         [Fact]
+        public async void GetbyId_Should_Return_NotFoundTest()
+        {
+            // Arrange
+            //DeleteAll();
+            var id = "6553a3bde159e09ee8bc1b47";
+            // Act
+            var actionResult = await controller.Get(id);
+            // Assert
+            var notFoundResult = actionResult as NotFoundResult;
+            Assert.NotNull(notFoundResult);
+            Assert.Equal((int)HttpStatusCode.NotFound, (int)notFoundResult.StatusCode);
+            DeleteAll();
+        }
+        [Fact]
         public async void Create_Test()
         {
             // Arrange
