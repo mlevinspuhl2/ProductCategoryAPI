@@ -114,6 +114,29 @@ namespace TestProductCategory
             DeleteAll();
         }
         [Fact]
+        public async void Create_WithCategoryTest()
+        {
+            // Arrange
+            //DeleteAll();
+            _productData = await GetProductData(_productService);
+            var _categoryData = await GetCategoryData(_categoryService);
+            var dto = new ProductDTO
+            {
+                Name = "Name Test",
+                Description = "Description Test",
+                CategoryId = _categoryData.Id
+            };
+            // Act
+            var actionResult = await controller.Create(dto);
+            // Assert
+            var okResult = actionResult as OkObjectResult;
+            Assert.NotNull(okResult);
+            Assert.Equal((int)HttpStatusCode.OK, (int)okResult.StatusCode);
+            var product = okResult.Value as Product;
+            Assert.Equal(dto.Description, product.Description);
+            DeleteAll();
+        }
+        [Fact]
         public async void Create_Should_Return_NotFoundTest()
         {
             // Arrange
@@ -136,6 +159,27 @@ namespace TestProductCategory
             {
                 Name = "Name Test",
                 Description = "Description Test"
+            };
+            // Act
+            var actionResult = await controller.Update(_productData.Id, dto);
+            // Assert
+            var noResult = actionResult as NoContentResult;
+            Assert.NotNull(noResult);
+            Assert.Equal((int)HttpStatusCode.NoContent, noResult.StatusCode);
+            DeleteAll();
+        }
+        [Fact]
+        public async void Update_WithCategoryTest()
+        {
+            // Arrange
+            //DeleteAll();
+            _productData = await GetProductData(_productService);
+            var _categoryData = await GetCategoryData(_categoryService);
+            var dto = new ProductDTO
+            {
+                Name = "Name Test",
+                Description = "Description Test",
+                CategoryId = _categoryData.Id,
             };
             // Act
             var actionResult = await controller.Update(_productData.Id, dto);
@@ -240,6 +284,15 @@ namespace TestProductCategory
             };
             return await _productService.Create(dto);
 
+        }
+        private async Task<Category> GetCategoryData(ICategoryService? _categoryService)
+        {
+            var dto = new CategoryDTO
+            {
+                Name = "Category Name",
+                Description = "Category Description"
+            };
+            return await _categoryService.Create(dto);
         }
         private ProductController? GetControler(IProductService? productService, ICategoryService? categoryService)
         {

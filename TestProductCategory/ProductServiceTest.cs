@@ -141,13 +141,15 @@ namespace TestProductCategory
             // Arrange
             //DeleteAll();
             _productData = await GetProductData(_productService);
+            var _categoryData = await GetCategoryData(_categoryService);
             var dto = new ProductDTO
             {
                 Name = "Name Test",
-                Description = "Description Test"
+                Description = "Description Test",
+                CategoryId = _categoryData.Id
             };
             // Act
-            await _productService.Update(_productData.Id, dto);
+            await _productService.Update(_productData.Id, dto, _categoryData);
             var result = await _productService.Get(_productData.Id);
             // Assert
             Assert.NotNull(result);
