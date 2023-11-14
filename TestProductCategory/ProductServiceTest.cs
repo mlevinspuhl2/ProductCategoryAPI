@@ -2,6 +2,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
+using Microsoft.VisualStudio.TestPlatform.TestHost;
 using MongoDB.Driver;
 using ProductCategoryAPI.DTO;
 using ProductCategoryAPI.models;
@@ -10,71 +11,70 @@ using ProductCategoryAPI.Services;
 namespace TestProductCategory
 {
     [Collection("Our Test Collection #1")]
-    public class CategoryServiceTest
+    public class ProductServiceTest
     {
         private IHost _host;
-        private ICategoryService? _categoryService;
+        private IProductService? _productService;
         private readonly MongoDBContext? _dbcontext;
-        private Category _categoryData;
+        private Product _productData;
 
-        public CategoryServiceTest()
+        public ProductServiceTest()
         {
             _host = GetWorkerService().Build();
-            _categoryService = _host.Services.GetService<ICategoryService>();
+            _productService = _host.Services.GetService<IProductService>();
             _dbcontext = _host.Services.GetService<MongoDBContext>();
             
         }
-        private async Task<Category> GetCategoryData(ICategoryService? _categoryService)
+        private async Task<Product> GetProductData(IProductService? _productService)
         {
-            var dto = new CategoryDTO
+            var dto = new ProductDTO
             {
-                Name = "Category Name",
-                Description = "Category Description"
+                Name = "Product Name",
+                Description = "Product Description"
             };
-            return  await _categoryService.Create(dto);
-
+            return await _productService.Create(dto);
         }
         [Fact]
-        public async void Get_Test()
+        public async Task Get_Test()
         {
             // Arrange
             var count = 1;
             //DeleteAll();
-            _categoryData = await GetCategoryData(_categoryService);
+            _productData = await GetProductData(_productService);
             // Act
-            var result = await _categoryService.Get();
+            var result = await _productService.Get();
             // Assert
             Assert.NotNull(result);
             //Assert.Equal(count,result.Count());
             DeleteAll();
         }
         [Fact]
-        public async void GetbyId_Test()
+        public async Task GetbyId_Test()
         {
             // Arrange
-           // DeleteAll();
-            _categoryData = await GetCategoryData(_categoryService);
-            var id = _categoryData.Id;
+            //DeleteAll();
+            _productData = await GetProductData(_productService);
+            var id = _productData.Id;
             // Act
-            var result = await _categoryService.Get(id);
+            var result = await _productService.Get(id);
             // Assert
             Assert.NotNull(result);
             Assert.Equal(id, result.Id);
             DeleteAll();
         }
         [Fact]
-        public async void Create_Test()
+        public async Task Create_Test()
         {
             // Arrange
             //DeleteAll();
-            _categoryData = await GetCategoryData(_categoryService);
-            var dto = new CategoryDTO
+            _productData = await GetProductData(_productService);
+            var dto = new ProductDTO
             {
                 Name = "Name Test",
                 Description = "Description Test"
             };
             // Act
-            var result = await _categoryService.Create(dto);
+            var result = await _productService.Create(dto);
             // Assert
             Assert.NotNull(result);
             Assert.NotNull(result.Id);
@@ -82,19 +82,19 @@ namespace TestProductCategory
             DeleteAll();
         }
         [Fact]
-        public async void Update_Test()
+        public async Task Update_Test()
         {
             // Arrange
             //DeleteAll();
-            _categoryData = await GetCategoryData(_categoryService);
-            var dto = new CategoryDTO
+            _productData = await GetProductData(_productService);
+            var dto = new ProductDTO
             {
                 Name = "Name Test",
                 Description = "Description Test"
             };
             // Act
-            await _categoryService.Update(_categoryData.Id, dto);
-            var result = await _categoryService.Get(_categoryData.Id);
+            await _productService.Update(_productData.Id, dto);
+            var result = await _productService.Get(_productData.Id);
             // Assert
             Assert.NotNull(result);
             Assert.NotNull(result.Id);
@@ -102,26 +102,28 @@ namespace TestProductCategory
             DeleteAll();
         }
         [Fact]
-        public async void Delete_Test()
+        public async Task Delete_Test()
         {
             // Arrange
             //DeleteAll();
-            _categoryData = await GetCategoryData(_categoryService);
-            var dto = new CategoryDTO
+            _productData = await GetProductData(_productService);
+            var dto = new ProductDTO
             {
                 Name = "Name Test",
                 Description = "Description Test"
             };
             // Act
-            await _categoryService.Delete(_categoryData.Id);
-            var result = _categoryService.Get().Result;
-            _categoryData = _categoryService.Create(dto).Result;
+            await _productService.Delete(_productData.Id);
+            var result = await _productService.Get();
+            _productData = await _productService.Create(dto);
             // Assert
             Assert.Empty(result);
             DeleteAll();
         }
         private IHostBuilder GetWorkerService()
         {
+            var program = new Program();
+
             return Host.CreateDefaultBuilder()
                 .ConfigureAppConfiguration((hostContext, config) =>
                 {
@@ -129,7 +131,7 @@ namespace TestProductCategory
                 })
                 .ConfigureServices((hostContext, services) =>
                 {
-                    services.AddAutoMapper(typeof(CategoryServiceTest));
+                    services.AddAutoMapper(typeof(ProductServiceTest));
                     services.AddScoped<ICategoryService, CategoryService>();
                     services.AddScoped<IProductService, ProductService>();
                     services.Configure<MongoDBSettings>(hostContext
@@ -143,8 +145,9 @@ namespace TestProductCategory
         }
         private async Task DeleteAll()
         {
-            var filter = Builders<Category>.Filter.Empty;//.Where(x => x.Id != _productData.Id);
-            await _dbcontext.Categories.DeleteManyAsync(filter);
+            var filter = Builders<Product>.Filter.Empty;//.Where(x => x.Id != _productData.Id);
+            
+            await _dbcontext.Products.DeleteManyAsync(filter);
         }
     }
 }

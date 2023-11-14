@@ -1,38 +1,32 @@
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
+using ProductCategoryAPI.Controllers;
 using ProductCategoryAPI.DTO;
 using ProductCategoryAPI.models;
 using ProductCategoryAPI.Services;
+using System.Net;
 
 namespace TestProductCategory
 {
     [Collection("Our Test Collection #1")]
-    public class CategoryServiceTest
+    public class CategoryControllerTest
     {
         private IHost _host;
         private ICategoryService? _categoryService;
         private readonly MongoDBContext? _dbcontext;
         private Category _categoryData;
-
-        public CategoryServiceTest()
+        private readonly CategoryController controller;
+        public CategoryControllerTest()
         {
             _host = GetWorkerService().Build();
             _categoryService = _host.Services.GetService<ICategoryService>();
             _dbcontext = _host.Services.GetService<MongoDBContext>();
-            
-        }
-        private async Task<Category> GetCategoryData(ICategoryService? _categoryService)
-        {
-            var dto = new CategoryDTO
-            {
-                Name = "Category Name",
-                Description = "Category Description"
-            };
-            return  await _categoryService.Create(dto);
-
+            controller = GetControler(_categoryService);
         }
         [Fact]
         public async void Get_Test()
@@ -42,24 +36,35 @@ namespace TestProductCategory
             //DeleteAll();
             _categoryData = await GetCategoryData(_categoryService);
             // Act
-            var result = await _categoryService.Get();
+            var actionResult = await controller.Get();
             // Assert
-            Assert.NotNull(result);
-            //Assert.Equal(count,result.Count());
+            var okResult = actionResult as OkObjectResult;
+            Assert.NotNull(okResult);
+            Assert.Equal((int)HttpStatusCode.OK, (int)okResult.StatusCode);
+            var categories = okResult.Value as List<Category>;
+            Assert.NotNull(categories);
+            //Assert.Equal(count, categories.Count);
             DeleteAll();
         }
         [Fact]
         public async void GetbyId_Test()
         {
             // Arrange
-           // DeleteAll();
+            //DeleteAll();
             _categoryData = await GetCategoryData(_categoryService);
             var id = _categoryData.Id;
             // Act
-            var result = await _categoryService.Get(id);
+            var actionResult = await controller.Get(id);
             // Assert
-            Assert.NotNull(result);
-            Assert.Equal(id, result.Id);
+            var okResult = actionResult as OkObjectResult;
+            if(okResult == null)
+            {
+                var act = actionResult;
+            }
+            Assert.NotNull(okResult);
+            Assert.Equal((int)HttpStatusCode.OK, (int)okResult.StatusCode);
+            var category = okResult.Value as Category;
+            Assert.Equal(id, category.Id);
             DeleteAll();
         }
         [Fact]
@@ -74,11 +79,13 @@ namespace TestProductCategory
                 Description = "Description Test"
             };
             // Act
-            var result = await _categoryService.Create(dto);
+            var actionResult = await controller.Create(dto);
             // Assert
-            Assert.NotNull(result);
-            Assert.NotNull(result.Id);
-            Assert.Equal(dto.Description, result.Description);
+            var okResult = actionResult as OkObjectResult;
+            Assert.NotNull(okResult);
+            Assert.Equal((int)HttpStatusCode.OK, (int)okResult.StatusCode);
+            var category = okResult.Value as Category;
+            Assert.Equal(dto.Description, category.Description);
             DeleteAll();
         }
         [Fact]
@@ -93,12 +100,11 @@ namespace TestProductCategory
                 Description = "Description Test"
             };
             // Act
-            await _categoryService.Update(_categoryData.Id, dto);
-            var result = await _categoryService.Get(_categoryData.Id);
+            var actionResult = await controller.Update(_categoryData.Id, dto);
             // Assert
-            Assert.NotNull(result);
-            Assert.NotNull(result.Id);
-            Assert.Equal(dto.Description, result.Description);
+            var noResult = actionResult as NoContentResult;
+            Assert.NotNull(noResult);
+            Assert.Equal((int)HttpStatusCode.NoContent, noResult.StatusCode);
             DeleteAll();
         }
         [Fact]
@@ -113,15 +119,39 @@ namespace TestProductCategory
                 Description = "Description Test"
             };
             // Act
-            await _categoryService.Delete(_categoryData.Id);
-            var result = _categoryService.Get().Result;
+            var actionResult = await controller.Delete(_categoryData.Id);
             _categoryData = _categoryService.Create(dto).Result;
             // Assert
-            Assert.Empty(result);
+            var noResult = actionResult as NoContentResult;
+            Assert.NotNull(noResult);
+            Assert.Equal((int)HttpStatusCode.NoContent, noResult.StatusCode);
             DeleteAll();
         }
+        private async Task<Category> GetCategoryData(ICategoryService? _categoryService)
+        {
+            var dto = new CategoryDTO
+            {
+                Name = "Category Name",
+                Description = "Category Description"
+            };
+            return await _categoryService.Create(dto);
+
+        }
+        private CategoryController? GetControler(ICategoryService? categoryService)
+        {
+            using var loggerFactory = LoggerFactory.Create(loggingBuilder => loggingBuilder
+            .SetMinimumLevel(LogLevel.Trace)
+            .AddConsole());
+
+            ILogger<CategoryController> logger = loggerFactory.CreateLogger<CategoryController>();
+
+            return new CategoryController(categoryService, logger);
+        }
+
         private IHostBuilder GetWorkerService()
         {
+
+
             return Host.CreateDefaultBuilder()
                 .ConfigureAppConfiguration((hostContext, config) =>
                 {

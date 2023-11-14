@@ -11,7 +11,6 @@ namespace ProductCategoryAPI.DTO
         public string Description { get; set; }
         [Required(ErrorMessage = "Price is required.")]
         public decimal Price { get; set; }
-        [Required(ErrorMessage = "CategoryId is required.")]
         public string CategoryId { get; set; }
         public string Color { get; set; }
     }

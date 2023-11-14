@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
 using ProductCategoryAPI.DTO;
 using ProductCategoryAPI.models;
@@ -19,17 +18,18 @@ namespace ProductCategoryAPI.Services
         {
             return await _context.Products.Find(p => p.Id == id).FirstOrDefaultAsync();
         }
-        public async Task<Product> Create(ProductDTO productDto, Category category)
+        public async Task<Product> Create(ProductDTO productDto, Category category = null)
         {
             var product = _mapper.Map<Product>(productDto);
-            product.Category = category;
+            if (category != null) { product.Category = category; }
+
             await _context.Products.InsertOneAsync(product);
             return product;
         }
-        public async Task Update(string id, ProductDTO productDto, Category category)
+        public async Task Update(string id, ProductDTO productDto, Category category = null)
         {
             var productReplace = _mapper.Map<Product>(productDto);
-            productReplace.Category = category;
+            if (category != null) { productReplace.Category = category; }
             productReplace.Id = id;
             await _context.Products.ReplaceOneAsync(p => p.Id == id, productReplace);
         }

@@ -16,7 +16,7 @@ namespace ProductCategoryAPI.Controllers
         }
         [HttpGet]
         [Route("api/[controller]")]
-        public async Task<ActionResult<IEnumerable<Category>>> Get()
+        public async Task<ActionResult> Get()
         {
             try
             {
@@ -32,7 +32,7 @@ namespace ProductCategoryAPI.Controllers
         }
         [HttpGet()]
         [Route("api/[controller]/{id}")]
-        public async Task<ActionResult<Category>> Get(string id)
+        public async Task<ActionResult> Get(string id)
         {
             try
             {
@@ -42,7 +42,7 @@ namespace ProductCategoryAPI.Controllers
                 {
                     return NotFound();
                 }
-                return category;
+                return Ok(category);
             }
             catch (Exception ex)
             {
@@ -51,12 +51,12 @@ namespace ProductCategoryAPI.Controllers
         }
         [HttpPost]
         [Route("api/[controller]/Create")]
-        public async Task<ActionResult<Category>> Create(CategoryDTO categoryDto)
+        public async Task<ActionResult> Create(CategoryDTO categoryDto)
         {
             if (categoryDto != null)
             {
                 var category = await _categoryService.Create(categoryDto);
-                return CreatedAtRoute(new { id = category.Id }, category);
+                return Ok(category);
             }
             return NotFound("Category can not be null");
 

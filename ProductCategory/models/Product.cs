@@ -24,7 +24,6 @@ namespace ProductCategoryAPI.models
         [BsonElement("Price")]
         public decimal Price { get; set; }
 
-        [BsonRequired]
         [BsonElement("Category")]
         public Category Category { get; set; }
 

@@ -12,8 +12,6 @@ namespace ProductCategoryAPI.models
             _client = new MongoClient(connectionString);
             _database = _client.GetDatabase(databaseName);
         }
-        public MongoClient GetClient() {  return _client; }
-
         public IMongoCollection<Product> Products => _database.GetCollection<Product>("Products");
         public IMongoCollection<Category> Categories => _database.GetCollection<Category>("Categories");
     }

@@ -9,21 +9,23 @@ namespace ProductCategoryAPI.Controllers
     {
         private readonly IProductService _productService;
         private readonly ICategoryService _categoryService;
-        public ProductController(IProductService productService, ICategoryService categoryService)
+        private readonly ILogger<ProductController> _logger;
+        public ProductController(IProductService productService, ICategoryService categoryService, ILogger<ProductController> logger)
         {
             _productService = productService;
             _categoryService = categoryService;
+            _logger = logger;
         }
         [HttpGet]
         [Route("api/[controller]/Get")]
-        public async Task<IEnumerable<Product>> Get()
+        public async Task<ActionResult> Get()
         {
-            return await _productService.Get();
+            return Ok(await _productService.Get());
         }
 
         [HttpGet()]
         [Route("api/[controller]/{id}")]
-        public async Task<ActionResult<Product>> Get(string id)
+        public async Task<ActionResult> Get(string id)
         {
             try
             {
@@ -42,17 +44,23 @@ namespace ProductCategoryAPI.Controllers
         }
         [HttpPost]
         [Route("api/[controller]/Create")]
-        public async Task<ActionResult<Product>> Create(ProductDTO productDto)
+        public async Task<ActionResult> Create(ProductDTO productDto)
         {
+            Product product;
+            Category category = null;
             if (productDto != null)
             {
-                var category = await _categoryService.Get(productDto.CategoryId);
-                if (category == null)
+                if (productDto.CategoryId != null)
                 {
-                    return NotFound("Category not found");
+                    category = await _categoryService.Get(productDto.CategoryId);
+                    if (category == null)
+                    {
+                        return NotFound("Category not found");
+                    }
+                    
                 }
-                var product = await _productService.Create(productDto, category);
-                return CreatedAtRoute(new { id = product.Id }, product);
+                product = await _productService.Create(productDto, category);
+                return Ok(product);
             }
             return NotFound("Product can not be null");
         }
@@ -62,17 +70,22 @@ namespace ProductCategoryAPI.Controllers
         {
             try
             {
+                Category category = null;
                 var product = await _productService.Get(id);
 
                 if (product == null)
                 {
                     return NotFound($"Product not found by id:{id}");
                 }
-                var category = await _categoryService.Get(productDto.CategoryId);
-                if (category == null)
+                if(productDto.CategoryId != null)
                 {
-                    return NotFound($"Category not found by categoryId:{productDto.CategoryId}");
+                    category = await _categoryService.Get(productDto.CategoryId);
+                    if (category == null)
+                    {
+                        return NotFound($"Category not found by categoryId:{productDto.CategoryId}");
+                    }
                 }
+
                 await _productService.Update(id, productDto, category);
                 return NoContent();
             }
