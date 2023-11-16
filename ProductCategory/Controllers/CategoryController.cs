@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ProductCategoryAPI.DTO;
-using ProductCategoryAPI.models;
 using ProductCategoryAPI.Services;
 
 namespace ProductCategoryAPI.Controllers
@@ -49,9 +48,32 @@ namespace ProductCategoryAPI.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+        [HttpGet()]
+        [Route("api/[controller]/GetByName")]
+        public async Task<ActionResult> GetByName(string name)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(name))
+                {
+                    return Ok(await _categoryService.Get());
+                }
+                 var category = await _categoryService.GetByName(name);
+
+                if (category == null)
+                {
+                    return NotFound();
+                }
+                return Ok(category);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
         [HttpPost]
-        [Route("api/[controller]/Create")]
-        public async Task<ActionResult> Create(CategoryDTO categoryDto)
+        [Route("api/[controller]")]
+        public async Task<ActionResult> Create([FromBody]CategoryDTO categoryDto)
         {
             if (categoryDto != null)
             {
@@ -62,8 +84,8 @@ namespace ProductCategoryAPI.Controllers
 
         }
         [HttpPut()]
-        [Route("api/[controller]/Update/{id}")]
-        public async Task<IActionResult> Update(string id, CategoryDTO categoryDto)
+        [Route("api/[controller]/{id}")]
+        public async Task<IActionResult> Update(string id, [FromBody]CategoryDTO categoryDto)
         {
             try
             {
@@ -72,9 +94,9 @@ namespace ProductCategoryAPI.Controllers
                 {
                     return NotFound();
                 }
-                await _categoryService.Update(id, categoryDto);
-
-                return NoContent();
+                categoryDto = await _categoryService.Update(id, categoryDto);
+                categoryDto.Message = "Category updated!";
+                return Ok(categoryDto);
             }
             catch (Exception ex)
             {
@@ -82,7 +104,7 @@ namespace ProductCategoryAPI.Controllers
             }
         }
         [HttpDelete()]
-        [Route("api/[controller]/Delete/{id}")]
+        [Route("api/[controller]/{id}")]
         public async Task<IActionResult> Delete(string id)
         {
             try
@@ -95,6 +117,20 @@ namespace ProductCategoryAPI.Controllers
                 }
                 await _categoryService.Delete(id);
                 return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+        [HttpDelete()]
+        [Route("api/[controller]")]
+        public async Task<IActionResult> Delete()
+        {
+            try
+            {
+                var dto = await _categoryService.Delete();
+                return Ok(dto);
             }
             catch (Exception ex)
             {

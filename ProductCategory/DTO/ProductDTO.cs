@@ -13,5 +13,6 @@ namespace ProductCategoryAPI.DTO
         public decimal Price { get; set; }
         public string CategoryId { get; set; }
         public string Color { get; set; }
+        public string Message { get; set; }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using MongoDB.Bson;
 using MongoDB.Driver;
 using ProductCategoryAPI.DTO;
 using ProductCategoryAPI.models;
@@ -18,24 +19,38 @@ namespace ProductCategoryAPI.Services
         {
             return await _context.Categories.Find(p => p.Id == id).FirstOrDefaultAsync();
         }
-        public async Task<Category> Create(CategoryDTO categoryDto)
+        public async Task<List<Category>> GetByName(string name)
+        {
+            var filter = Builders<Category>.Filter.Regex("Name", new BsonRegularExpression($"/{name}/i"));
+
+            return await _context.Categories.Find(filter).ToListAsync();
+        }
+        public async Task<CategoryDTO> Create(CategoryDTO categoryDto)
         {
             var category = _mapper.Map<Category>(categoryDto);
             await _context.Categories.InsertOneAsync(category);
-            return category;
+            return _mapper.Map<CategoryDTO>(category); ;
         }
-        public async Task Update(string id, CategoryDTO categoryDto)
+        public async Task<CategoryDTO> Update(string id, CategoryDTO categoryDto)
         {
             var categoryReplace = _mapper.Map<Category>(categoryDto);
             categoryReplace.Id = id;
             await _context.Categories.ReplaceOneAsync(p => p.Id == id, categoryReplace);
+            return _mapper.Map<CategoryDTO>(categoryReplace);
         }
-        public async Task Delete(string id)
+        public async Task<CategoryDTO> Delete(string id)
         {
             var filter = Builders<Category>.Filter.Eq(category => category.Id, id);
             await _context.Categories.DeleteOneAsync(filter);
-            
+            return new CategoryDTO { Message = "Category removed!" };
+
         }
-     
+        public async Task<CategoryDTO> Delete()
+        {
+            var filter = Builders<Category>.Filter.Empty;
+            await _context.Categories.DeleteManyAsync(filter);
+            return new CategoryDTO { Message = "Categories removed!" };
+        }
+
     }
 }
