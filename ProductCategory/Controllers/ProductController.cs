@@ -17,7 +17,7 @@ namespace ProductCategoryAPI.Controllers
             _logger = logger;
         }
         [HttpGet]
-        [Route("api/[controller]/Get")]
+        [Route("api/[controller]")]
         public async Task<ActionResult> Get()
         {
             return Ok(await _productService.Get());
@@ -43,8 +43,8 @@ namespace ProductCategoryAPI.Controllers
             }
         }
         [HttpPost]
-        [Route("api/[controller]/Create")]
-        public async Task<ActionResult> Create(ProductDTO productDto)
+        [Route("api/[controller]")]
+        public async Task<ActionResult> Create([FromBody]ProductDTO productDto)
         {
             Product product;
             Category category = null;
@@ -65,8 +65,8 @@ namespace ProductCategoryAPI.Controllers
             return NotFound();
         }
         [HttpPut()]
-        [Route("api/[controller]/Update/{id}")]
-        public async Task<IActionResult> Update(string id, ProductDTO productDto)
+        [Route("api/[controller]/{id}")]
+        public async Task<IActionResult> Update(string id, [FromBody]ProductDTO productDto)
         {
             try
             {
@@ -94,7 +94,8 @@ namespace ProductCategoryAPI.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
-        [HttpDelete("{id}")]
+        [HttpDelete()]
+        [Route("api/[controller]/{id}")]
         public async Task<IActionResult> Delete(string id)
         {
             try
