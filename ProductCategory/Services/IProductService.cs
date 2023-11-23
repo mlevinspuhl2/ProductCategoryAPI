@@ -9,6 +9,6 @@ namespace ProductCategoryAPI.Services
         Task Delete(string id);
         Task<IEnumerable<Product>> Get();
         Task<Product> Get(string id);
-        Task Update(string id, ProductDTO productDto, Category category = null);
+        Task<ProductDTO> Update(string id, ProductDTO productDto, Category category = null);
     }
 }

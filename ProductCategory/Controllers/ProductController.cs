@@ -44,29 +44,36 @@ namespace ProductCategoryAPI.Controllers
         }
         [HttpPost]
         [Route("api/[controller]")]
-        public async Task<ActionResult> Create([FromBody]ProductDTO productDto)
+        public async Task<ActionResult> Create([FromBody] ProductDTO productDto)
         {
-            Product product;
-            Category category = null;
-            if (productDto != null)
+            try
             {
-                if (productDto.CategoryId != null)
+                Product product;
+                Category category = null;
+                if (productDto != null)
                 {
-                    category = await _categoryService.Get(productDto.CategoryId);
-                    if (category == null)
+                    if (!string.IsNullOrEmpty(productDto.CategoryId))
                     {
-                        return NotFound();
+                        category = await _categoryService.Get(productDto.CategoryId);
+                        if (category == null)
+                        {
+                            return NotFound();
+                        }
+
                     }
-                    
+                    product = await _productService.Create(productDto, category);
+                    return Ok(product);
                 }
-                product = await _productService.Create(productDto, category);
-                return Ok(product);
+                return NotFound();
             }
-            return NotFound();
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
         [HttpPut()]
         [Route("api/[controller]/{id}")]
-        public async Task<IActionResult> Update(string id, [FromBody]ProductDTO productDto)
+        public async Task<IActionResult> Update(string id, [FromBody] ProductDTO productDto)
         {
             try
             {
@@ -77,7 +84,7 @@ namespace ProductCategoryAPI.Controllers
                 {
                     return NotFound();
                 }
-                if(productDto.CategoryId != null)
+                if (productDto.CategoryId != null)
                 {
                     category = await _categoryService.Get(productDto.CategoryId);
                     if (category == null)
@@ -86,8 +93,8 @@ namespace ProductCategoryAPI.Controllers
                     }
                 }
 
-                await _productService.Update(id, productDto, category);
-                return NoContent();
+                productDto = await _productService.Update(id, productDto, category);
+                return Ok(productDto);
             }
             catch (Exception ex)
             {

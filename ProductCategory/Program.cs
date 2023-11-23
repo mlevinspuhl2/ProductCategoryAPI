@@ -61,7 +61,10 @@ namespace ProductCategoryAPI
             app.UseSwagger();
             app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Product Category API v1"));
             //}
-            app.UseHttpsRedirection();
+            if (!app.Environment.IsDevelopment())
+            {
+                app.UseHttpsRedirection();
+            }
             app.UseRouting();
             app.UseCors("CorsPolicy");
             app.UseAuthorization();
