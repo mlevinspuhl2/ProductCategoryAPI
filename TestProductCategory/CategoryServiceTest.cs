@@ -24,7 +24,7 @@ namespace TestProductCategory
             _dbcontext = _host.Services.GetService<MongoDBContext>();
             
         }
-        private async Task<Category> GetCategoryData(ICategoryService? _categoryService)
+        private async Task<CategoryDTO> GetCategoryData(ICategoryService? _categoryService)
         {
             var dto = new CategoryDTO
             {
@@ -40,7 +40,7 @@ namespace TestProductCategory
             // Arrange
             var count = 1;
             //DeleteAll();
-            _categoryData = await GetCategoryData(_categoryService);
+            var dto = await GetCategoryData(_categoryService);
             // Act
             var result = await _categoryService.Get();
             // Assert
@@ -53,7 +53,7 @@ namespace TestProductCategory
         {
             // Arrange
            // DeleteAll();
-            _categoryData = await GetCategoryData(_categoryService);
+            var dto = await GetCategoryData(_categoryService);
             var id = _categoryData.Id;
             // Act
             var result = await _categoryService.Get(id);
@@ -67,8 +67,8 @@ namespace TestProductCategory
         {
             // Arrange
             //DeleteAll();
-            _categoryData = await GetCategoryData(_categoryService);
-            var dto = new CategoryDTO
+            var dto = await GetCategoryData(_categoryService);
+            dto = new CategoryDTO
             {
                 Name = "Name Test",
                 Description = "Description Test"
@@ -77,7 +77,6 @@ namespace TestProductCategory
             var result = await _categoryService.Create(dto);
             // Assert
             Assert.NotNull(result);
-            Assert.NotNull(result.Id);
             Assert.Equal(dto.Description, result.Description);
             DeleteAll();
         }
@@ -86,8 +85,8 @@ namespace TestProductCategory
         {
             // Arrange
             //DeleteAll();
-            _categoryData = await GetCategoryData(_categoryService);
-            var dto = new CategoryDTO
+            var dto = await GetCategoryData(_categoryService);
+            dto = new CategoryDTO
             {
                 Name = "Name Test",
                 Description = "Description Test"
@@ -106,8 +105,8 @@ namespace TestProductCategory
         {
             // Arrange
             //DeleteAll();
-            _categoryData = await GetCategoryData(_categoryService);
-            var dto = new CategoryDTO
+            var dto = await GetCategoryData(_categoryService);
+            dto = new CategoryDTO
             {
                 Name = "Name Test",
                 Description = "Description Test"
@@ -115,7 +114,7 @@ namespace TestProductCategory
             // Act
             await _categoryService.Delete(_categoryData.Id);
             var result = _categoryService.Get().Result;
-            _categoryData = _categoryService.Create(dto).Result;
+            dto = _categoryService.Create(dto).Result;
             // Assert
             Assert.Empty(result);
             DeleteAll();

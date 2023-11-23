@@ -34,7 +34,7 @@ namespace TestProductCategory
             // Arrange
             var count = 1;
             //DeleteAll();
-            _categoryData = await GetCategoryData(_categoryService);
+            var dto = await GetCategoryData(_categoryService);
             // Act
             var actionResult = await controller.Get();
             // Assert
@@ -51,7 +51,7 @@ namespace TestProductCategory
         {
             // Arrange
             //DeleteAll();
-            _categoryData = await GetCategoryData(_categoryService);
+            var dto = await GetCategoryData(_categoryService);
             var id = _categoryData.Id;
             // Act
             var actionResult = await controller.Get(id);
@@ -100,8 +100,8 @@ namespace TestProductCategory
         {
             // Arrange
             //DeleteAll();
-            _categoryData = await GetCategoryData(_categoryService);
-            var dto = new CategoryDTO
+            var dto = await GetCategoryData(_categoryService);
+            dto = new CategoryDTO
             {
                 Name = "Name Test",
                 Description = "Description Test"
@@ -134,8 +134,8 @@ namespace TestProductCategory
         {
             // Arrange
             //DeleteAll();
-            _categoryData = await GetCategoryData(_categoryService);
-            var dto = new CategoryDTO
+            var dto = await GetCategoryData(_categoryService);
+            dto = new CategoryDTO
             {
                 Name = "Name Test",
                 Description = "Description Test"
@@ -191,15 +191,15 @@ namespace TestProductCategory
         {
             // Arrange
             //DeleteAll();
-            _categoryData = await GetCategoryData(_categoryService);
-            var dto = new CategoryDTO
+            var dto = await GetCategoryData(_categoryService);
+            dto = new CategoryDTO
             {
                 Name = "Name Test",
                 Description = "Description Test"
             };
             // Act
             var actionResult = await controller.Delete(_categoryData.Id);
-            _categoryData = _categoryService.Create(dto).Result;
+            await _categoryService.Create(dto);
             // Assert
             var noResult = actionResult as NoContentResult;
             Assert.NotNull(noResult);
@@ -234,7 +234,7 @@ namespace TestProductCategory
             Assert.Equal((int)HttpStatusCode.InternalServerError, (int)objectResult.StatusCode);
             DeleteAll();
         }
-        private async Task<Category> GetCategoryData(ICategoryService? _categoryService)
+        private async Task<CategoryDTO> GetCategoryData(ICategoryService? _categoryService)
         {
             var dto = new CategoryDTO
             {

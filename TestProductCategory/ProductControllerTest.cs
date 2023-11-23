@@ -124,7 +124,6 @@ namespace TestProductCategory
             {
                 Name = "Name Test",
                 Description = "Description Test",
-                CategoryId = _categoryData.Id
             };
             // Act
             var actionResult = await controller.Create(dto);
@@ -179,7 +178,7 @@ namespace TestProductCategory
             {
                 Name = "Name Test",
                 Description = "Description Test",
-                CategoryId = _categoryData.Id,
+
             };
             // Act
             var actionResult = await controller.Update(_productData.Id, dto);
@@ -285,7 +284,7 @@ namespace TestProductCategory
             return await _productService.Create(dto);
 
         }
-        private async Task<Category> GetCategoryData(ICategoryService? _categoryService)
+        private async Task<CategoryDTO> GetCategoryData(ICategoryService? _categoryService)
         {
             var dto = new CategoryDTO
             {

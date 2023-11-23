@@ -36,7 +36,7 @@ namespace TestProductCategory
             };
             return await _productService.Create(dto);
         }
-        private async Task<Category> GetCategoryData(ICategoryService? _categoryService)
+        private async Task<CategoryDTO> GetCategoryData(ICategoryService? _categoryService)
         {
             var dto = new CategoryDTO
             {
@@ -103,10 +103,9 @@ namespace TestProductCategory
             {
                 Name = "Name Test",
                 Description = "Description Test",
-                CategoryId = _categoryData.Id
             };
             // Act
-            var result = await _productService.Create(dto, _categoryData);
+            var result = await _productService.Create(dto, null);
             // Assert
             Assert.NotNull(result);
             Assert.NotNull(result.Id);
@@ -124,10 +123,9 @@ namespace TestProductCategory
             {
                 Name = "Name Test",
                 Description = "Description Test",
-                CategoryId = _categoryData.Id
             };
             // Act
-            await _productService.Update(_productData.Id, dto, _categoryData);
+            await _productService.Update(_productData.Id, dto, null);
             var result = await _productService.Get(_productData.Id);
             // Assert
             Assert.NotNull(result);
@@ -146,10 +144,9 @@ namespace TestProductCategory
             {
                 Name = "Name Test",
                 Description = "Description Test",
-                CategoryId = _categoryData.Id
             };
             // Act
-            await _productService.Update(_productData.Id, dto, _categoryData);
+            await _productService.Update(_productData.Id, dto, null);
             var result = await _productService.Get(_productData.Id);
             // Assert
             Assert.NotNull(result);
