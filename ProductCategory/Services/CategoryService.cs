@@ -35,7 +35,17 @@ namespace ProductCategoryAPI.Services
         {
             var categoryReplace = _mapper.Map<Category>(categoryDto);
             categoryReplace.Id = id;
+
+
             await _context.Categories.ReplaceOneAsync(p => p.Id == id, categoryReplace);
+            var filter = Builders<Product>.Filter.Eq(prod => prod.Category.Id, id);
+            var products = _context.Products.Find(filter).ToListAsync().Result;
+            products.ForEach(prod => prod.Category = categoryReplace);
+            foreach(var prod in products)
+            {
+                prod.Category = categoryReplace;
+                _context.Products.ReplaceOneAsync(p => p.Id == prod.Id, prod);
+            }
             return _mapper.Map<CategoryDTO>(categoryReplace);
         }
         public async Task<CategoryDTO> Delete(string id)
