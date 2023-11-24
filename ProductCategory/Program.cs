@@ -46,18 +46,18 @@ namespace ProductCategoryAPI
             builder.Services.AddControllers();
             builder.Services.AddCors(options =>
             {
-                options.AddPolicy("CorsPolicy", 
+                options.AddPolicy("AllowAngularOrigins", 
                     builder =>
                 {
-                    builder.WithOrigins("http://localhost",
-                        "http://52.18.129.98")
+                    builder.WithOrigins("http://localhost:83",
+                        "http://52.18.129.98:83")
                     .AllowAnyMethod()
                     .AllowAnyHeader()
                     .SetIsOriginAllowedToAllowWildcardSubdomains();
                 });
             });
             var app = builder.Build();
-
+            app.UseCors("AllowAngularOrigins");
             // Configure the HTTP request pipeline.
             //if (app.Environment.IsDevelopment())
             //{
