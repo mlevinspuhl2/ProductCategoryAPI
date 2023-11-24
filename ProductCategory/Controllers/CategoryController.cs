@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Mvc;
 using ProductCategoryAPI.DTO;
 using ProductCategoryAPI.Services;
 
 namespace ProductCategoryAPI.Controllers
 {
-    public class CategoryController : Controller
+    [EnableCors("MyPolicy")]
+    public class CategoryController : ControllerBase
     {
         private readonly ICategoryService _categoryService;
         private readonly ILogger<CategoryController> _logger;

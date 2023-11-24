@@ -46,7 +46,7 @@ namespace ProductCategoryAPI
             builder.Services.AddControllers();
             builder.Services.AddCors(options =>
             {
-                options.AddPolicy("AllowAngularOrigins", 
+                options.AddPolicy(name: "MyPolicy",
                     builder =>
                 {
                     builder.WithOrigins("http://localhost:83",
@@ -55,13 +55,11 @@ namespace ProductCategoryAPI
                         "http://52.18.129.98:4200",
                         "http://172.31.22.34:83",
                         "http://172.31.22.34:4200")
-                    .AllowAnyMethod()
-                    .AllowAnyHeader()
-                    .SetIsOriginAllowedToAllowWildcardSubdomains();
+                    .WithMethods("PUT", "DELETE", "GET");
                 });
             });
             var app = builder.Build();
-            app.UseCors("AllowAngularOrigins");
+            app.UseCors();
             // Configure the HTTP request pipeline.
             //if (app.Environment.IsDevelopment())
             //{
@@ -73,12 +71,13 @@ namespace ProductCategoryAPI
                 app.UseHttpsRedirection();
             }
             app.UseRouting();
-            app.UseCors("CorsPolicy");
+            app.UseCors();
             app.UseAuthorization();
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-            });
+            app.MapControllers();
+            //app.UseEndpoints(endpoints =>
+            //{
+            //    endpoints.MapControllers();
+            //});
             app.Run();
 
         }
