@@ -44,13 +44,16 @@ namespace ProductCategoryAPI
 
             // Add controllers
             builder.Services.AddControllers();
-            builder.Services.AddCors(c =>
+            builder.Services.AddCors(options =>
             {
-                c.AddPolicy("CorsPolicy", options =>
+                options.AddPolicy("CorsPolicy", 
+                    builder =>
                 {
-                    options.AllowAnyOrigin()
+                    builder.WithOrigins("http://localhost",
+                        "http://52.18.129.98:83")
+                    .AllowAnyMethod()
                     .AllowAnyHeader()
-                    .AllowAnyMethod();
+                    .SetIsOriginAllowedToAllowWildcardSubdomains();
                 });
             });
             var app = builder.Build();
