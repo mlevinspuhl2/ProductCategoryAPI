@@ -50,7 +50,7 @@ namespace ProductCategoryAPI
                     builder =>
                 {
                     builder.WithOrigins("http://localhost",
-                        "http://52.18.129.98:83")
+                        "http://52.18.129.98")
                     .AllowAnyMethod()
                     .AllowAnyHeader()
                     .SetIsOriginAllowedToAllowWildcardSubdomains();
