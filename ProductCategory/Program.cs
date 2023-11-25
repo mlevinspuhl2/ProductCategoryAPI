@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Options;
+﻿using Amazon.Auth.AccessControlPolicy;
+using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using NLog.Extensions.Logging;
 using ProductCategoryAPI.models;
@@ -46,16 +47,21 @@ namespace ProductCategoryAPI
             builder.Services.AddControllers();
             builder.Services.AddCors(options =>
             {
-                options.AddPolicy(name: "MyPolicy",
-                    builder =>
+                //options.AddPolicy(name: "MyPolicy",
+                //    policy =>
+                //{
+                //    policy.WithOrigins("http://localhost:83",
+                //        "http://52.18.129.98:83",
+                //        "http://localhost:4200",
+                //        "http://52.18.129.98:4200",
+                //        "http://172.31.22.34:83",
+                //        "http://172.31.22.34:4200")
+                //    .AllowAnyMethod()
+                //    .AllowAnyHeader();
+                //});
+                options.AddDefaultPolicy(builder =>
                 {
-                    builder.WithOrigins("http://localhost:83",
-                        "http://52.18.129.98:83",
-                        "http://localhost:4200",
-                        "http://52.18.129.98:4200",
-                        "http://172.31.22.34:83",
-                        "http://172.31.22.34:4200")
-                    .WithMethods("PUT", "DELETE", "GET");
+                    builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
                 });
             });
             var app = builder.Build();
