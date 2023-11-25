@@ -6,7 +6,6 @@ using ProductCategoryAPI.Services;
 
 namespace ProductCategoryAPI.Controllers
 {
-    [EnableCors("MyPolicy")]
     public class ProductController : ControllerBase
     {
         private readonly IProductService _productService;
